@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UrlService } from './url.service';
 import { CreateUrlDto } from './dto/url.dto';
 import { UrlObject } from '@url-program/common/dist/types';
@@ -21,5 +21,10 @@ export class UrlController {
     @Patch(':id/click')
     async incrementClickCount(@Param('id', ParseIntPipe) id: number): Promise<UrlObject> {
         return await this.urlService.incrementClickCount(id);
+    }
+
+    @Delete(':id')
+    async deleteUrl(@Param('id', ParseIntPipe) id: number): Promise<void> {
+        return await this.urlService.deleteUrl(id);
     }
 }

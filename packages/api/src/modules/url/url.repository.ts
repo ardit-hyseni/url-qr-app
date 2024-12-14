@@ -18,6 +18,10 @@ export class UrlRepository {
         return await this.prismaService.url.update({ where: { id }, data: { clickCount: { increment: 1 } } });
     }
 
+    async deleteUrl(id: number): Promise<void> {
+        await this.prismaService.url.delete({ where: { id } });
+    }
+
     async deleteExpiredUrls(): Promise<void> {
         const now = new Date();
         await this.prismaService.url.deleteMany({ where: { expiration: { lte: now } } });

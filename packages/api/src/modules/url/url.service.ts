@@ -47,6 +47,10 @@ export class UrlService {
         return await this.urlRepository.incrementClickCount(id);
     }
 
+    async deleteUrl(id: number): Promise<void> {
+        return await this.urlRepository.deleteUrl(id);
+    }
+
     @Cron(CronExpression.EVERY_MINUTE)
     async deleteExpiredUrls(): Promise<void> {
         this.logger.log('Deleting expired URLs...');
