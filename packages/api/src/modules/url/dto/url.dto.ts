@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsUrl } from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateUrlDto {
     @IsString()
@@ -6,5 +6,6 @@ export class CreateUrlDto {
     originalUrl: string;
 
     @IsNumber()
-    expirationMinutes: number;
+    @IsOptional()
+    expirationMinutes?: number;
 }

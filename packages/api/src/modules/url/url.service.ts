@@ -10,6 +10,7 @@ const URL_POSTFIX_LENGTH = 10;
 const ZERO = 0;
 const URL_PREFIX = 'https://short.link/';
 const MINUTES_TO_MILLISECONDS = 60000;
+const WEEK_IN_MILLISECONDS = 604800000;
 
 @Injectable()
 export class UrlService {
@@ -25,7 +26,10 @@ export class UrlService {
         const qrCode = await this.generateQrCode(request.originalUrl);
         const shortenedUrl = this.shortenUrl(request.originalUrl);
 
-        const expirationDate = new Date(now.getTime() + request.expirationMinutes * MINUTES_TO_MILLISECONDS);
+        // if expirationMinutes is not provided, set expiration to a week from now
+        const expirationDate = request.expirationMinutes ?
+            new Date(now.getTime() + request.expirationMinutes * MINUTES_TO_MILLISECONDS) :
+            new Date(now.getTime() + WEEK_IN_MILLISECONDS);
 
         const fullRequest: CreateUrlRequest = {
             originalUrl: request.originalUrl,
@@ -65,5 +69,4 @@ export class UrlService {
         const shortId = hash.slice(ZERO, URL_POSTFIX_LENGTH);
         return `${URL_PREFIX}${shortId}`;
     }
-
 }
