@@ -1,0 +1,23 @@
+{
+  "name": "@url-program/common",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:dev": "npm run build",
+    "build:clean": "rimraf dist && npm run build",
+    "clean": "rm -rf ./dist",
+    "clean:full": "rm -rf ./node_modules ./dist",
+    "deps:install": "npm i",
+    "deps:update": "npm update",
+    "lint": "eslint ./src --ext .ts --max-warnings 0",
+    "lint:staged": "lint-staged",
+    "start": "rimraf dist && tsc --watch",
+    "test": "jest",
+    "test:watch": "npm run test -- --watch"
+  }
+}

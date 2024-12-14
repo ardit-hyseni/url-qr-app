@@ -1,0 +1,5 @@
+# compiled output
+/dist
+/slsdist
+/node_modules
+/.build

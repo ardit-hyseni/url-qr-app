@@ -1,0 +1,27 @@
+{
+    "folders": [
+        {
+            "name": ".workspace",
+            "path": ".."
+        },
+        {
+            "name": "common",
+            "path": "../packages/common"
+        },
+        {
+            "name": "api",
+            "path": "../packages/api"
+        },
+        {
+            "name": "web",
+            "path": "../packages/web"
+        },
+    ],
+    "settings": {
+        "files.exclude": {
+            "packages/": true
+        },
+        "editor.formatOnSave": true,
+        "typescript.tsdk": ".workspace/node_modules/typescript/lib"
+    }
+}
