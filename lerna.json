@@ -1,0 +1,8 @@
+{
+	"packages": [
+		"packages/common",
+		"packages/api",
+		"packages/web"
+	],
+	"useNx": false,
+}

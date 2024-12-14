@@ -8,3 +8,10 @@ export type UrlObject = {
     createdAt: Date;
     updatedAt: Date;
 };
+
+export type CreateUrlRequest = {
+    originalUrl: string;
+    shortUrl: string;
+    qrCode: string;
+    expiration?: Date | string;
+}
