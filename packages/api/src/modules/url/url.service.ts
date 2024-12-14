@@ -57,11 +57,6 @@ export class UrlService {
         return await QRCode.toDataURL(url);
     }
 
-    // private shortenUrl(): string {
-    //     const nanoid = customAlphabet('0123456789abcdef', URL_POSTFIX_LENGTH);
-    //     // const generatedPostFix = nanoid();
-    //     return nanoid();
-    // }
     private shortenUrl(originalUrl: string): string {
         // Create a hash of the original URL
         const hash = crypto.createHash('sha256').update(originalUrl).digest('hex');
