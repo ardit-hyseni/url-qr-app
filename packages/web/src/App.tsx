@@ -1,12 +1,17 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
 import { UrlFormRequest, UrlObject } from '@url-program/common/dist/types'
 import { UrlApiService } from './services/url.service'
 import AnchorzUpLogo from './assets/AnchorzUp_Logo.png';
+import { toast } from 'react-toastify';
 
 function App() {
   // const [count, setCount] = useState(0);
-  const [urlForm, setUrlForm] = useState<UrlFormRequest>({ originalUrl: '', expirationMinutes: 0 });
+  const initialUrlForm = {
+    originalUrl: '',
+    expirationMinutes: 0
+  }
+  const [urlForm, setUrlForm] = useState<UrlFormRequest>(initialUrlForm);
   const [urlError, setUrlError] = useState<string>('');
   const [urls, setUrls] = useState<UrlObject[]>([]);
   const urlRegex = /^(http|https):\/\/[^\s]+$/;
@@ -17,32 +22,52 @@ function App() {
     try {
       const response = await urlApiService.fetchAllUrls();
       setUrls(response);
-    } catch (error) {
-      console.error('Error fetching URLs:', error);
+    } catch (error: any) {
+      toast.error(error.message);
     }
   }, [urlApiService]);
 
   const deleteUrl = useCallback(async (id: number) => {
     try {
-      await urlApiService.deleteUrl(id);
-      fetchAllUrls();
-    } catch (error) {
-      console.error('Error deleting URL:', error);
+      const response = await urlApiService.deleteUrl(id); // Delete the URL from the server
+      if (response) {
+        // setUrls(prevUrls => prevUrls.filter(url => url.id !== id));
+        fetchAllUrls();
+      }
+    } catch (error: any) {
+      toast.error(error.message);
     }
   }, [urlApiService]);
 
-  useEffect(() => {
-    if (urlForm.originalUrl.length > 0 && !urlRegex.test(urlForm.originalUrl)) {
-      setUrlError('Please enter a valid URL that starts with http:// or https://');
-    } else {
+  const createUrl = useCallback(async () => {
+    try {
+      if (urlForm.originalUrl.length > 0 && !urlRegex.test(urlForm.originalUrl)) {
+        setUrlError('Please enter a valid URL that starts with http:// or https://');
+        return;
+      }
       setUrlError('');
+      await urlApiService.createUrl(urlForm);
+      fetchAllUrls();
+      setUrlForm(initialUrlForm);
+    } catch (error: any) {
+      toast.error(error.message);
     }
-  }, [urlForm.originalUrl]);
+  }, [urlApiService, urlForm]);
+
+  const handleLinkClick = async (e: React.MouseEvent<HTMLAnchorElement>, id: number, originalUrl: string) => {
+    e.preventDefault(); // Prevent the default navigation
+    try {
+      await urlApiService.incrementClickCount(id); // Send the increment request
+      fetchAllUrls();
+      window.open(originalUrl, '_blank'); // Open the original URL in a new tab
+    } catch (error: any) {
+      toast.error('Failed to increment click count'); // Handle errors
+    }
+  };
 
   useEffect(() => {
     fetchAllUrls();
-    // eslint-disable-next-line
-  }, []);
+  }, [fetchAllUrls]);
 
   return (
     <>
@@ -54,28 +79,17 @@ function App() {
           </div>
           <h5 className="mb-3 fw-bold">My shortened URLs</h5>
           <ul className="list-unstyled">
-            {/* <li className="border border-secondary mb-3 d-flex justify-content-between align-items-center">
-              <a href="https://shorturl.co/ckrDR" className="text-primary text-decoration-none">https://shorturl.co/ckrDR</a>
-              <button className="btn btn-link p-0 text-secondary">
-                <i className="bi bi-trash"></i>
-              </button>
-            </li>
-            <li className="mb-3 d-flex justify-content-between align-items-center">
-              <a href="https://shorturl.co/cdbEa" className="text-primary text-decoration-none">https://shorturl.co/cdbEa</a>
-              <button className="btn btn-link p-0 text-secondary">
-                <i className="bi bi-trash"></i>
-              </button>
-            </li>
-            <li className="mb-3 d-flex justify-content-between align-items-center">
-              <a href="https://shorturl.co/3avoE" className="text-primary text-decoration-none">https://shorturl.co/3avoE</a>
-              <button type="button" className="btn btn-link p-0 text-secondary">
-                <i className="bi bi-trash"></i>
-              </button>
-            </li> */}
-            {urls.map(url => {
-              return <li key={url.id} className="mb-3 d-flex justify-content-between align-items-center">
-                <a href={"https://www.google.com"} className="text-primary text-decoration-none">{url.shortUrl}</a>
-                <button type="button" className="btn btn-link p-0 text-secondary">
+            {urls && urls.length > 0 && urls.map(url => {
+              return <li key={url.id} className="p-2 my-3 d-flex justify-content-between align-items-center">
+                <div style={{ textAlign: 'center' }}>
+                  <a href={url.originalUrl} onClick={(e) => handleLinkClick(e, url.id, url.originalUrl)} className="text-primary text-decoration-none">{url.shortUrl}</a>
+                  <span className="d-block mt-1 clickspan">
+                    This link has been clicked {url.clickCount} {url.clickCount === 1 ? 'time' : 'times'}.
+                  </span>
+
+                </div>
+                <img src={url.qrCode} alt="QR Code" />
+                <button type="button" onClick={() => deleteUrl(url.id)} className="btn btn-link p-0 text-secondary">
                   <i className="bi bi-trash"></i>
                 </button>
               </li>
@@ -108,14 +122,13 @@ function App() {
             </div>
 
           </div>
-          {JSON.stringify(urlForm)}
           {urlError.length > 0 &&
             <div className="alert alert-warning" role="alert">
               {urlError}
             </div>
           }
           <div className="d-flex align-items-center mb-4">
-            <button className="btn btn-primary fw-bold text-uppercase" style={{ backgroundColor: '#7E2A94' }}>
+            <button className="btn btn-primary fw-bold text-uppercase" disabled={urlForm.originalUrl.length === 0} onClick={createUrl} style={{ backgroundColor: '#7E2A94' }}>
               Shorten URL
             </button>
           </div>

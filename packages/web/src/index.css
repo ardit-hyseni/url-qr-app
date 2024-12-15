@@ -3,6 +3,11 @@ body {
   padding: 40px;
 }
 
+.clickspan {
+  font-size: 14px;
+  color: #9bb7f4;
+}
+
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
