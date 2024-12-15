@@ -15,3 +15,8 @@ export type CreateUrlRequest = {
     qrCode: string;
     expiration?: Date | string;
 }
+
+export type UrlFormRequest = {
+    originalUrl: string;
+    expirationMinutes?: number;
+}

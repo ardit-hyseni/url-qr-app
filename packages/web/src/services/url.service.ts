@@ -11,4 +11,12 @@ export class UrlApiService {
 
         return await response.json();
     }
+
+    async deleteUrl(id: number): Promise<any> {
+        const response = await fetch(`${apiUrl}/v1/url/${id}`,
+            { method: 'DELETE' }
+        );
+
+        return await response.json();
+    };
 }

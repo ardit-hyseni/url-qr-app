@@ -1,8 +1,11 @@
-import { IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
+import { UrlFormRequest } from '@url-program/common/dist/types';
+import { IsNumber, IsOptional, IsString, Matches } from 'class-validator';
 
-export class CreateUrlDto {
+export class CreateUrlDto implements UrlFormRequest {
     @IsString()
-    @IsUrl()
+    @Matches(/^(https?:\/\/)[^\s$.?#].[^\s]*$/, {
+        message: 'The URL must start with http:// or https://',
+    })
     originalUrl: string;
 
     @IsNumber()
