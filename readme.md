@@ -3,7 +3,7 @@
 ### Prerequisites:
 
 - Docker (Docker Desktop) installed
-- Node v18 or higher
+- Node v18 or higher installed
 - npm installed
 
 ### Setting up the app:
